@@ -2,32 +2,31 @@
 
 ## Variables
 ROOT_DIR != pwd
-TERRAFORM_BIN != which terraform
-TERRAFORM_DOCS_BIN != which terraform-docs
 
+DOCKER_TF_VERSION 	  ?= latest
 DOCKER_TFLINT_VERSION ?= latest
-DOCKER_TFSEC_VERSION ?= latest
+DOCKER_TFSEC_VERSION  ?= latest
+DOCKER_TFDOCS_VERSION ?= latest
+OPTIONS				  ?=
 
 ## Targets
 help: ## Show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 init: ## Initializes the Terraform configuration
-	$(TERRAFORM_BIN) init
+	docker run --rm --workdir /data -u 1000:1000 -v $(ROOT_DIR):/data hashicorp/terraform:$(DOCKER_TF_VERSION) init -input=false $(OPTIONS) /data
 
 fmt: ## Formats the Terraform configuration
-	$(TERRAFORM_BIN) fmt
+	docker run --rm -v $(ROOT_DIR):/data hashicorp/terraform:$(DOCKER_TF_VERSION) fmt $(OPTIONS) /data
 
-validate: init ## Validates the Terraform configuration
-	$(TERRAFORM_BIN) validate
+validate: ## Validates the Terraform configuration
+	docker run --rm hashicorp/terraform:$(DOCKER_TF_VERSION) validate $(OPTIONS)
 
 docs: ## Generates the documentation. Creates a README.md file
-	$(TERRAFORM_DOCS_BIN) . > README.md
+	docker run --rm -v $(ROOT_DIR):/data:ro quay.io/terraform-docs/terraform-docs:$(DOCKER_TFDOCS_VERSION) /data > README.md
 
-lint:
-
-lint-docker: ## Runs the dockerized version of tflint
+lint: ## Runs the dockerized version of tflint
 	docker run --rm -v $(ROOT_DIR):/data:ro -t wata727/tflint:$(DOCKER_TFLINT_VERSION)
 
-sec-docker: ## Runs the dockerized version of tfsec
-	docker run --rm -it -v "$(ROOT_DIR):/src" liamg/tfsec:$(DOCKER_TFSEC_VERSION) /src
+security: ## Runs the dockerized version of tfsec
+	docker run --rm -it -v $(ROOT_DIR):/data:ro liamg/tfsec:$(DOCKER_TFSEC_VERSION) /data
