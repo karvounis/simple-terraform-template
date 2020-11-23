@@ -1,15 +1,15 @@
 .DEFAULT_GOAL:=help
 
-## Variables
+# Variables
 ROOT_DIR != pwd
 
 DOCKER_TF_VERSION 	  ?= latest
 DOCKER_TFLINT_VERSION ?= latest
 DOCKER_TFSEC_VERSION  ?= latest
 DOCKER_TFDOCS_VERSION ?= latest
-OPTIONS				  ?=
+OPTIONS				  ?=		# The options to be passed to the executed command
 
-## Targets
+# Targets
 help: ## Show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
@@ -26,7 +26,7 @@ docs: ## Generates the documentation. Creates a README.md file
 	docker run --rm -v $(ROOT_DIR):/data:ro quay.io/terraform-docs/terraform-docs:$(DOCKER_TFDOCS_VERSION) /data > README.md
 
 lint: ## Runs the dockerized version of tflint
-	docker run --rm -v $(ROOT_DIR):/data:ro -t wata727/tflint:$(DOCKER_TFLINT_VERSION)
+	docker run --rm -v $(ROOT_DIR):/data:ro -t wata727/tflint:$(DOCKER_TFLINT_VERSION) $(OPTIONS)
 
 security: ## Runs the dockerized version of tfsec
-	docker run --rm -it -v $(ROOT_DIR):/data:ro liamg/tfsec:$(DOCKER_TFSEC_VERSION) /data
+	docker run --rm -it -v $(ROOT_DIR):/data:ro liamg/tfsec:$(DOCKER_TFSEC_VERSION) /data $(OPTIONS)
