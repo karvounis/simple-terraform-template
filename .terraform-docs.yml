@@ -1,3 +1,4 @@
+# Terraform docs configuration file
 formatter: markdown table
 header-from: doc.md
 sort:

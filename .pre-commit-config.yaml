@@ -1,0 +1,38 @@
+fail_fast: false
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+        exclude: README.md
+      - id: trailing-whitespace
+        exclude: README.md
+      - id: detect-aws-credentials
+      - id: detect-private-key
+  - repo: local
+    hooks:
+      - id: terraform_lint
+        name: Terraform lint
+        entry: make lint
+        language: system
+      - id: terraform_fmt
+        name: Terraform format
+        entry: make fmt
+        language: system
+      - id: terraform_validate
+        name: Terraform validate
+        entry: make validate
+        language: system
+      - id: terraform_sec
+        name: Terraform security
+        entry: make security
+        language: system
+      - id: terraform_checkov
+        name: Terraform static code analysis tool
+        entry: make checkov
+        language: system
+      - id: terraform_docs
+        name: Terraform documentation
+        entry: make docs
+        language: system
