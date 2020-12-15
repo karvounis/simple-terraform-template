@@ -68,7 +68,6 @@ OPTIONS		           ?=		 # The options to be passed to the executed command
 ```
 
 ## Examples
-
 ### fmt
 
 ```
